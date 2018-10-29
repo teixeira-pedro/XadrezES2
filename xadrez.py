@@ -38,6 +38,7 @@ class Jogo:
         #TURNO ÍMPAR = VEZ DAS BRANCAS
         #TURNO PAR = VEZ DAS PREAS
         self.turno=1
+        self.casa_selecionada=[]
         self.jogadores=('j','J')
         #CAPS LOCK : PRETO ; sem caps lock : branco
         # T : torre
@@ -126,10 +127,46 @@ class Jogo:
             if peca=='c':
                 return 'imgs\cavalo_branco.png'                
             if peca=='C':
-                return 'imgs\cavalo_preto.png'                
+                return 'imgs\cavalo_preto.png'
+
+        def desenha(self):
+            matriz=[]
+            for i in range(8):
+                if i%2 == 0:
+                    matriz.append(['#', '-', '#', '-', '#', '-', '#', '-'])
+                else:
+                    matriz.append(['-', '#', '-', '#', '-', '#', '-', '#'])
+            y=0
+            for l in range(len(matriz)):
+                x=0
+                for c in range(len(matriz[l])):
+                    if matriz[l][c]=='#':
+                        pygame.draw.rect(tela, VERDE_ESCURO, (x, y, TAMANHO_QUADRADO, TAMANHO_QUADRADO))
+                    else:
+                        pygame.draw.rect(tela, BEGE, (x, y, TAMANHO_QUADRADO, TAMANHO_QUADRADO))
+                    x += TAMANHO_QUADRADO
+                y += TAMANHO_QUADRADO
+
+            if self.casa_selecionada:
+                obrigatorios=
 
 
+def loop_jogo():
+    sair = False
 
+    jogo=Jogo()
+
+    while not sair:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                sair = True
+                pygame.quit()
+                quit()
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                jogo.jogadas(pygame.mouse.get_pos())
+
+        tela.fill(PRETO)
+        
         
         
 
