@@ -1,5 +1,6 @@
 import pygame
 import time
+import os 
 pygame.init()
 
 LARGURA = 640
@@ -110,29 +111,29 @@ class Jogo:
         #pega o endereco do png da peça
         def imagem_peca(self,peca):
             if peca=='p':
-                return 'imgs\peao_branco.png'                
+                return os.getcwd()+'\\imgs\\peao_branco.png'                
             if peca=='P':
-                return 'imgs\peao_preto.png'                
+                return os.getcwd()+'\\imgs\\peao_preto.png'                
             if peca=='r':
-                return 'imgs\rei_branco.png'                
+                return os.getcwd()+'\\imgs\\rei_branco.png'                
             if peca=='R':
-                return 'imgs\rei_preto.png'                
+                return os.getcwd()+'\\imgs\\rei_preto.png'                
             if peca=='a':
-                return 'imgs\rainha_branco.png'                
+                return os.getcwd()+'\\imgs\\rainha_branco.png'                
             if peca=='A':
-                return 'imgs\rainha_preto.png'                
+                return os.getcwd()+'\\imgs\\rainha_preto.png'                
             if peca=='t':
-                return 'imgs\torre_branco.png'                
+                return os.getcwd()+'\\imgs\\torre_branco.png'                
             if peca=='T':
-                return 'imgs\torre_preto.png'                
+                return os.getcwd()+'\\imgs\\torre_preto.png'                
             if peca=='b':
-                return 'imgs\bispo_branco.png'                
+                return os.getcwd()+'\\imgs\\bispo_branco.png'                
             if peca=='B':
-                return 'imgs\bispo_preto.png'                
+                return os.getcwd()+'\\imgs\\bispo_preto.png'                
             if peca=='c':
-                return 'imgs\cavalo_branco.png'                
+                return os.getcwd()+'\\imgs\\cavalo_branco.png'                
             if peca=='C':
-                return 'imgs\cavalo_preto.png'
+                return os.getcwd()+'\\imgs\\cavalo_preto.png'
 
         def desenha(self):
             matriz=[]
@@ -151,7 +152,16 @@ class Jogo:
                         pygame.draw.rect(tela, BEGE, (x, y, TAMANHO_QUADRADO, TAMANHO_QUADRADO))
                     x += TAMANHO_QUADRADO
                 y += TAMANHO_QUADRADO
-            
+            yy=0
+            for i in range(len(self.tabuleiro)):
+                xx=0
+                for j in range(len(self.tabuleiro[i])):
+                    if self.imagem_peca(self.tabuleiro[i][j])!= None :
+                        # imprimir peças em suas posicoes
+                        self.imagem_peca(self.tabuleiro[i][j])
+                    #print(image)
+                    xx += TAMANHO_QUADRADO
+                yy += TAMANHO_QUADRADO
 
                 
 
