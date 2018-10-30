@@ -104,6 +104,9 @@ class Jogo:
         def ganhou(self):
             #xeque mate ?????
             return 0
+        def pixels_2_tabuleiro(self,pygameobj):
+            return (int((pygameobj.get_pos()[0])/80),int((pygameobj.get_pos()[1])/80))
+            
         #pega o endereco do png da peça
         def imagem_peca(self,peca):
             if peca=='p':
@@ -148,6 +151,7 @@ class Jogo:
                         pygame.draw.rect(tela, BEGE, (x, y, TAMANHO_QUADRADO, TAMANHO_QUADRADO))
                     x += TAMANHO_QUADRADO
                 y += TAMANHO_QUADRADO
+            
 
                 
 
@@ -166,8 +170,9 @@ def loop_jogo():
                 pygame.quit()
                 quit()
             if evento.type == pygame.MOUSEBUTTONDOWN:
-                print(pygame.mouse.get_pos())
-                jogo.jogadas(pygame.mouse.get_pos())
+                
+                print(jogo.pixels_2_tabuleiro(pygame.mouse))
+                #jogo.jogadas(pygame.mouse.get_pos())
 
         tela.fill(PRETO)
         jogo.desenha()
