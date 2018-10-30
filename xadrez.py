@@ -1,6 +1,7 @@
 import pygame
 import time
 from movimento-pecas import *
+import os
 pygame.init()
 
 
@@ -113,29 +114,29 @@ class Jogo:
         #pega o endereco do png da peça
         def imagem_peca(self,peca):
             if peca=='p':
-                return 'imgs\peao_branco.png'                
+                return os.getcwd()+'\\imgs\\peao_branco.png'                
             if peca=='P':
-                return 'imgs\peao_preto.png'                
+                return os.getcwd()+'\\imgs\\peao_preto.png'                
             if peca=='r':
-                return 'imgs\rei_branco.png'                
+                return os.getcwd()+'\\imgs\\rei_branco.png'                
             if peca=='R':
-                return 'imgs\rei_preto.png'                
+                return os.getcwd()+'\\imgs\\rei_preto.png'                
             if peca=='a':
-                return 'imgs\rainha_branco.png'                
+                return os.getcwd()+'\\imgs\\rainha_branco.png'                
             if peca=='A':
-                return 'imgs\rainha_preto.png'                
+                return os.getcwd()+'\\imgs\\rainha_preto.png'                
             if peca=='t':
-                return 'imgs\torre_branco.png'                
+                return os.getcwd()+'\\imgs\\torre_branco.png'                
             if peca=='T':
-                return 'imgs\torre_preto.png'                
+                return os.getcwd()+'\\imgs\\torre_preto.png'                
             if peca=='b':
-                return 'imgs\bispo_branco.png'                
+                return os.getcwd()+'\\imgs\\bispo_branco.png'                
             if peca=='B':
-                return 'imgs\bispo_preto.png'                
+                return os.getcwd()+'\\imgs\\bispo_preto.png'                
             if peca=='c':
-                return 'imgs\cavalo_branco.png'                
+                return os.getcwd()+'\\imgs\\cavalo_branco.png'                
             if peca=='C':
-                return 'imgs\cavalo_preto.png'
+                return os.getcwd()+'\\imgs\\cavalo_preto.png'
 
         def desenha(self):
             matriz=[]
@@ -190,7 +191,8 @@ def loop_jogo():
                 pygame.quit()
                 quit()
             if evento.type == pygame.MOUSEBUTTONDOWN:
-                jogo.jogadas(pygame.mouse.get_pos())
+                print(jogo.pixels_2_tabuleiro(pygame.mouse))
+                #jogo.jogadas(pygame.mouse.get_pos())
 
         tela.fill(PRETO)
         jogo.desenha()
