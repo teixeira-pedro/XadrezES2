@@ -29,34 +29,36 @@ TAMANHO_PEÇA = 80
 tela = pygame.display.set_mode((640, 640))
 clock = pygame.time.Clock()
 
+def movimentos_obrigatorios(casa):
+    return None
 
 #toma conta do jogo
 class Jogo:
     # a função init é a construtora da classe
-    def __init__(self):
-        self.estado='jogando'
-        #TURNO ÍMPAR = VEZ DAS BRANCAS
-        #TURNO PAR = VEZ DAS PREAS
-        self.turno=1
-        self.casa_selecionada=[]
-        self.jogadores=('j','J')
-        #CAPS LOCK : PRETO ; sem caps lock : branco
-        # T : torre
-        # C : cavalo
-        # B : bispo
-        # A : rainha
-        # R : rei
-        # P : peão
-        self.tabuleiro=[
-                        ['T','C','B','A','R','B','C','T'],
-                        ['P','P','P','P','P','P','P','P'],
-                        ['0','0','0','0','0','0','0','0'],
-                        ['0','0','0','0','0','0','0','0'],
-                        ['0','0','0','0','0','0','0','0'],
-                        ['0','0','0','0','0','0','0','0'],
-                        ['p','p','p','p','p','p','p','p'],
-                        ['t','c','b','a','r','b','0','0'],
-        ]
+        def __init__(self):
+            self.estado='jogando'
+            #TURNO ÍMPAR = VEZ DAS BRANCAS
+            #TURNO PAR = VEZ DAS PREAS
+            self.turno=1
+            self.casa_selecionada=[]
+            self.jogadores=('j','J')
+            #CAPS LOCK : PRETO ; sem caps lock : branco
+            # T : torre
+            # C : cavalo
+            # B : bispo
+            # A : rainha
+            # R : rei
+            # P : peão
+            self.tabuleiro=[
+                            ['T','C','B','A','R','B','C','T'],
+                            ['P','P','P','P','P','P','P','P'],
+                            ['0','0','0','0','0','0','0','0'],
+                            ['0','0','0','0','0','0','0','0'],
+                            ['0','0','0','0','0','0','0','0'],
+                            ['0','0','0','0','0','0','0','0'],
+                            ['p','p','p','p','p','p','p','p'],
+                            ['t','c','b','a','r','b','0','0'],
+            ]
         def get_tabuleiro(self):
             return self.tabuleiro
         def get_turno(self):
@@ -147,8 +149,9 @@ class Jogo:
                     x += TAMANHO_QUADRADO
                 y += TAMANHO_QUADRADO
 
-            if self.casa_selecionada:
-                obrigatorios=
+                
+
+
 
 
 def loop_jogo():
@@ -166,9 +169,13 @@ def loop_jogo():
                 jogo.jogadas(pygame.mouse.get_pos())
 
         tela.fill(PRETO)
-        
-        
-        
+        jogo.desenha()
 
+        pygame.display.update()
+        clock.tick(60)
+        
+        
+        
+loop_jogo()
 pygame.quit()
 quit()
