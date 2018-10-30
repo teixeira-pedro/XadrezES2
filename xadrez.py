@@ -166,6 +166,7 @@ def loop_jogo():
                 pygame.quit()
                 quit()
             if evento.type == pygame.MOUSEBUTTONDOWN:
+                print(pygame.mouse.get_pos())
                 jogo.jogadas(pygame.mouse.get_pos())
 
         tela.fill(PRETO)
