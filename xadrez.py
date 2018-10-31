@@ -1,6 +1,7 @@
 import pygame
 import time
-from movimentos_pecas import *
+import movimentos_pecas
+#from movimento_pecas.py import *
 import os
 pygame.init()
 
@@ -148,7 +149,7 @@ class Jogo:
                 for j in range(len(self.get_tabuleiro()[i])):
                     if self.imagem_peca(self.get_tabuleiro()[i][j]) :
                         peca=pygame.image.load(self.imagem_peca(self.get_tabuleiro()[i][j]))
-                        tela.blit(peca,self.tabuleiro_2_pixels(i,j)[0])
+                        tela.blit(peca,self.tabuleiro_2_pixels(j,i)[0])
                         print('desenhando',self.tabuleiro_2_pixels(i,j)[0],self.get_tabuleiro()[i][j])
             #for i in range(8):
             #    if i%2 == 0:

@@ -72,3 +72,4 @@ def movimento_obrigatorio_rainha(tabuleiro,x,y):
         listaPossiveisRainha.append(movimentosPossiveisBispo[i])
 
     return listaPossiveisRainha 
+
