@@ -1,31 +1,50 @@
+def isPecaAliada(tabuleiro,xPecaAtual,yPecaAtual,xPecaAnalisada,yPecaAnalisada):
+    pecaAtual = tabuleiro[xPecaAtual][yPecaAtual]
+    pecaAnalisada = tabuleiro[xPecaAnalisada][yPecaAnalisada]
+    if pecaAtual == '0':
+        return false
+    if pecaAtual.isupper():
+        if pecaAnalisada.isupper():
+            return 1  #caso das duas serem UPPERCASE
+        return 0  #caso da atual ser UPPERCASE e a analisada LOWECASE
+    if pecaAnalisada.isupper():
+        return 0  #caso da atual ser LOWERCASE e a analisada UPPERCASE
+    return 1  #caso das duas serem LOWERCASE
+
 def movimento_obrigatorio_torre(tabuleiro,x,y):
     listaPossiveis = []
     i=x+1
     while(i < len(tabuleiro)):
         listaPossiveis.append([i,y])
-        i+=1
         if (tabuleiro[i][y] !=0):
-            if(isPecaAliada(tabuleiro,x,y,i,y)): #criar a funcao que verifica se a peça é aliada ou não (dados o tabuleiro, posicao da peca atual e peca colisao )
+            if(isPecaAliada(tabuleiro,x,y,i,y)): 
                 listaPossiveis.remove([i,y])
-                break
+            break
+        i+=1
     i = x-1
     while(i>=0):
-        #Verificar se possui peças na frente
         listaPossiveis.append([i,y])
+        if (tabuleiro[i][y] !=0):
+            if(isPecaAliada(tabuleiro,x,y,i,y)): 
+                listaPossiveis.remove([i,y])
+            break
         i-=1
-    
     j = y+1
     while(j < len(tabuleiro)[0]):
-        #Verificar se possui peças na frente
         listaPossiveis.append([x,j])
+        if (tabuleiro[x][j] !=0):
+            if(isPecaAliada(tabuleiro,x,y,x,j)): 
+                listaPossiveis.remove([x,j])
+            break
         j+=1
-    
     j = y-1
     while(j >= 0):
-        #Verificar se possui peças na frente
         listaPossiveis.append([x,j])
+        if (tabuleiro[x][j] !=0):
+            if(isPecaAliada(tabuleiro,x,y,x,j)): 
+                listaPossiveis.remove([x,j])
+            break
         j-=1
-    
     return listaPossiveis
 
 def movimento_obrigatorio_bispo(tabuleiro,x,y):
@@ -35,30 +54,43 @@ def movimento_obrigatorio_bispo(tabuleiro,x,y):
     while(i < len(tabuleiro) and j < len(tabuleiro)[0]):
         #Verificar se possui peças na frente
         listaPossiveis.append([i,j])
+        if (tabuleiro[i][j] !=0):
+            if(isPecaAliada(tabuleiro,x,y,i,j)): 
+                listaPossiveis.remove([i,j])
+            break
         i+=1
         j+=1
-    
+        
     i = x-1
     j = y-1
     while(i>=0 and j>=0):
-        #Verificar se possui peças na frente
         listaPossiveis.append([i,j])
+        if (tabuleiro[i][j] !=0):
+            if(isPecaAliada(tabuleiro,x,y,i,j)): 
+                listaPossiveis.remove([i,j])
+            break
         i-=1
         j-=1
 
     i = x-1
     j = y+1
     while(j < len(tabuleiro)[0] and i>=0):
-        #Verificar se possui peças na frente
         listaPossiveis.append([i,j])
+        if (tabuleiro[i][j] !=0):
+            if(isPecaAliada(tabuleiro,x,y,i,j)): 
+                listaPossiveis.remove([i,j])
+            break
         j+=1
         i-=1
 
     i = x+1
     j = y-1
     while(j >= 0 and i <len(tabuleiro)):
-        #Verificar se possui peças na frente
         listaPossiveis.append([i,j])
+        if (tabuleiro[i][j] !=0):
+            if(isPecaAliada(tabuleiro,x,y,i,j)): 
+                listaPossiveis.remove([i,j])
+            break
         j-=1
         i+=1
     
