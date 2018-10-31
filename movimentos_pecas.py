@@ -2,10 +2,12 @@ def movimento_obrigatorio_torre(tabuleiro,x,y):
     listaPossiveis = []
     i=x+1
     while(i < len(tabuleiro)):
-        #Verificar se possui peças na frente
         listaPossiveis.append([i,y])
         i+=1
-    
+        if (tabuleiro[i][y] !=0):
+            if(isPecaAliada(tabuleiro,x,y,i,y)): #criar a funcao que verifica se a peça é aliada ou não (dados o tabuleiro, posicao da peca atual e peca colisao )
+                listaPossiveis.remove([i,y])
+                break
     i = x-1
     while(i>=0):
         #Verificar se possui peças na frente
@@ -70,3 +72,4 @@ def movimento_obrigatorio_rainha(tabuleiro,x,y):
         listaPossiveisRainha.append(movimentosPossiveisBispo[i])
 
     return listaPossiveisRainha 
+
