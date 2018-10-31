@@ -1,6 +1,6 @@
 import pygame
 import time
-from movimento-pecas import *
+from movimentos_pecas import *
 import os
 pygame.init()
 
