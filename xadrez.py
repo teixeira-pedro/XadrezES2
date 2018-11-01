@@ -3,6 +3,7 @@ import time
 import movimentos_pecas
 #from movimento_pecas.py import *
 import os
+
 pygame.init()
 
 
@@ -35,6 +36,12 @@ TAMANHO_PEÇA = 80
 tela = pygame.display.set_mode((640, 640))
 clock = pygame.time.Clock()
 
+def funcao_joga(tabuleiro,atualX,atualY,desejadoX,desejadoY):
+    listaPossiveis = movimentos_possiveis_peca(tabuleiro,atualX,atualY)
+
+    if([desejadoX,desejadoY] in listaPossiveis):
+        tabuleiro[desejadoX][desejadoY] = tabuleiro[atualX][atualY]
+        tabuleiro[atualX][atualY] = '0'
 
 
 def movimentos_obrigatorios(casa):
@@ -75,7 +82,9 @@ class Jogo:
             return 0==self.turno%2
         def eh_vez_das_brancas(self):
             return not self.eh_vez_das_pretas()
-        def get_pecas_restantes(self,jogador):
+        def pixels_2_tabuleiro(self,pygameobj):
+            return (int((pygameobj.get_pos()[0])/80),int((pygameobj.get_pos()[1])/80))
+        def get_pecas_restantes(self,jogador):            
             CONT_PRETA=0
             cont_branca=0
             for linha in self.tabuleiro:
@@ -187,6 +196,7 @@ def loop_jogo():
 
     while not sair:
         for evento in pygame.event.get():
+            print(pygame.event.get())
             if evento.type == pygame.QUIT:
                 sair = True
                 pygame.quit()
@@ -197,7 +207,7 @@ def loop_jogo():
 
         tela.fill(PRETO)
         jogo.desenha()
-
+        #funcao_joga(tabuleiro,atualX,atualY,desejadoX,desejadoY)
         pygame.display.update()
         clock.tick(60)
         
