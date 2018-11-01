@@ -1,0 +1,239 @@
+import pygame
+import time
+from movimentos_pecas import *
+#from movimento_pecas.py import *
+import os
+
+pygame.init()
+
+
+FUNDO=os.getcwd()+'\\imgs\\bg.png'
+
+LARGURA = 640
+ALTURA = 640
+
+BEGE = (238,238,210)
+PRETO = (0, 0, 0)
+FOSCO = (158, 158, 158)
+BRANCO = (255, 255, 255)
+CINZA = (100, 100, 100)
+VERDE_ESCURO = (118,150,86)
+YELLOW = (0, 255, 0)
+VERMELHO_CLARO = (255, 0, 0)
+AZUL = (0, 0, 255)
+COR_FUNDO = (54, 54, 54)
+COR_TAB = (0, 31, 0)
+YELLOW = (255,215,0)
+CINZA = (222, 235, 235)
+MARROM = (235,199,158)
+CORAL = (240,128,128)
+VERDE_CLARO = (0, 255, 0)
+TAMANHO_QUADRADO = 80
+TAMANHO_PEÇA = 80
+
+
+
+tela = pygame.display.set_mode((640, 640))
+clock = pygame.time.Clock()
+
+def funcao_joga(tabuleiro,atualX,atualY,desejadoX,desejadoY):
+    listaPossiveis = movimentos_possiveis_peca(tabuleiro,atualX,atualY)
+
+    if([desejadoX,desejadoY] in listaPossiveis):
+        tabuleiro[desejadoX][desejadoY] = tabuleiro[atualX][atualY]
+        tabuleiro[atualX][atualY] = '0'
+
+
+
+def movimentos_obrigatorios(casa):
+    return None
+
+#toma conta do jogo
+class Jogo:
+    # a função init é a construtora da classe
+        def __init__(self):
+            self.estado='jogando'
+            #TURNO ÍMPAR = VEZ DAS BRANCAS
+            #TURNO PAR = VEZ DAS PRETAS
+            self.turno=1
+            self.casa_selecionada=[]
+            self.jogadores=('j','J')
+            #CAPS LOCK : PRETO ; sem caps lock : branco
+            # T : torre
+            # C : cavalo
+            # B : bispo
+            # A : rainha
+            # R : rei
+            # P : peão
+            self.tabuleiro=[
+                            ['0','0','C','0','0','0','B','0'],
+                            ['0','0','0','0','0','0','0','0'],
+                            ['0','0','0','0','0','R','0','C'],
+                            ['0','T','0','0','0','0','0','0'],
+                            ['0','0','0','0','0','0','0','0'],
+                            ['0','0','0','0','A','0','0','0'],
+                            ['B','0','0','0','0','0','T','0'],
+                            ['0','0','0','0','0','0','0','0']
+            ]
+
+        def set_tabuleiro(self,novo):
+            self.tabuleiro=novo
+        def get_tabuleiro(self):
+            return self.tabuleiro
+        def get_peca(self,xy):
+            return self.get_tabuleiro()[xy[0]][xy[1]]
+        def get_turno(self):
+            return self.turno
+        def eh_vez_das_pretas(self):
+            return 0==self.turno%2
+        def eh_vez_das_brancas(self):
+            return not self.eh_vez_das_pretas()
+        def pixels_2_tabuleiro(self,pygameobj):
+            return (int((pygameobj.get_pos()[0])/80),int((pygameobj.get_pos()[1])/80))
+        def get_pecas_restantes(self,jogador):            
+            CONT_PRETA=0
+            cont_branca=0
+            for linha in self.tabuleiro:
+                for item in linha:
+                    if item.isupper() :
+                        CONT_PRETA=CONT_PRETA+1
+                    if item.islower() :
+                        cont_branca=cont_branca+1
+            if jogador.isupper(): # se é preta
+                return CONT_PRETA
+            if jogador.islower(): # se é branca
+                return cont_branca
+            return 0
+        def coloca_peca(self,i,j,peca):
+            self.tabuleiro[i][j]=peca
+        def retira_peca(self,i,j):
+            self.tabuleiro[i][j]='0'
+        #muda a vez da jogada
+        def gira_turno(self):
+            self.turno=self.turno+1
+        #realiza a promoção de peças, dada a posicao da peça atual e
+        #a nova desehada
+        def promove(self,i,j,nova):
+            # não vale promover pra peão ou rei
+            if (nova!='p' and nova!='r' and nova!='P' and nova!='R'):
+            #só peões na ultima casa podem ser promovidos 
+                if self.tabuleiro[i][j]=='p' and i==0:
+                    self.tabuleiro[i][j]=nova.lower()
+                if self.tabuleiro[i][j]=='P' and i==7:                
+                    self.tabuleiro[i][j]=nova.upper()
+        # converte a posição da matriz em pixels para serem exibidos
+        def tabuleiro_2_pixels(self,i,j):
+            return [(80*i,80*j),((80*i)+80,(80*j)+j)]
+        def ganhou(self):
+            #xeque mate ?????
+            return 0
+        #pega o endereco do png da peça
+        def imagem_peca(self,peca):
+            if peca=='p':
+                return os.getcwd()+'\\imgs\\peao_branco.png'                
+            if peca=='P':
+                return os.getcwd()+'\\imgs\\peao_preto.png'                
+            if peca=='r':
+                return os.getcwd()+'\\imgs\\rei_branco.png'                
+            if peca=='R':
+                return os.getcwd()+'\\imgs\\rei_preto.png'                
+            if peca=='a':
+                return os.getcwd()+'\\imgs\\rainha_branco.png'                
+            if peca=='A':
+                return os.getcwd()+'\\imgs\\rainha_preto.png'                
+            if peca=='t':
+                return os.getcwd()+'\\imgs\\torre_branco.png'                
+            if peca=='T':
+                return os.getcwd()+'\\imgs\\torre_preto.png'                
+            if peca=='b':
+                return os.getcwd()+'\\imgs\\bispo_branco.png'                
+            if peca=='B':
+                return os.getcwd()+'\\imgs\\bispo_preto.png'                
+            if peca=='c':
+                return os.getcwd()+'\\imgs\\cavalo_branco.png'                
+            if peca=='C':
+                return os.getcwd()+'\\imgs\\cavalo_preto.png'
+
+        def desenha(self):
+            matriz=[]
+            #desenhando fundo
+            bg=pygame.image.load(FUNDO)
+            tela.blit(bg,(0,0))
+            #desenhando pecas
+            for i in range(len(self.get_tabuleiro())):
+                for j in range(len(self.get_tabuleiro()[i])):
+                    if self.imagem_peca(self.get_tabuleiro()[i][j]) :
+                        peca=pygame.image.load(self.imagem_peca(self.get_tabuleiro()[i][j]))
+                        tela.blit(peca,self.tabuleiro_2_pixels(j,i)[0])
+                        #print('desenhando',self.tabuleiro_2_pixels(i,j)[0],self.get_tabuleiro()[i][j])
+            #for i in range(8):
+            #    if i%2 == 0:
+            #        matriz.append(['#', '-', '#', '-', '#', '-', '#', '-'])
+            #    else:
+            #        matriz.append(['-', '#', '-', '#', '-', '#', '-', '#'])
+            #y=0
+            #for l in range(len(matriz)):
+            #    x=0
+            #    for c in range(len(matriz[l])):
+                    #if matriz[l][c]=='#':
+                    #    pygame.draw.rect(tela, VERDE_ESCURO, (x, y, TAMANHO_QUADRADO, TAMANHO_QUADRADO))
+                    #else:
+                    #    pygame.draw.rect(tela, BEGE, (x, y, TAMANHO_QUADRADO, TAMANHO_QUADRADO))
+                    #img=pygame.image.load(self.imagem_peca(self.tabuleiro[0][0]))
+            #        x += TAMANHO_QUADRADO
+            #    y += TAMANHO_QUADRADO
+            #yy=0
+            
+            #print(self.imagem_peca(self.tabuleiro[0][0]))
+            #for i in range(len(self.tabuleiro)):
+            #    xx=0
+            #    for j in range(len(self.tabuleiro[i])):
+            #        if self.imagem_peca(self.tabuleiro[i][j])!= None :
+            #            # imprimir peças em suas posicoes
+            #            self.imagem_peca(self.tabuleiro[i][j])
+            #        #print(image)
+            #        xx += TAMANHO_QUADRADO
+            #    yy += TAMANHO_QUADRADO
+
+def loop_jogo():
+    sair = False
+
+    
+    
+    
+    jogo=Jogo()
+    while not sair:
+
+        for evento in pygame.event.get():
+            print(pygame.event.get())
+            if evento.type == pygame.QUIT:
+                sair = True
+                pygame.quit()
+                quit()
+            if evento.type == pygame.MOUSEBUTTONDOWN :
+                selecao=jogo.pixels_2_tabuleiro(pygame.mouse)
+                print("selecionado:",selecao,jogo.get_tabuleiro()[selecao[1]][selecao[0]])
+                peca=jogo.get_peca(selecao)
+                print("movimentos possiveis:",movimentos_possiveis_peca(
+                    jogo.tabuleiro,selecao[1],selecao[0]
+                        )
+                      )
+
+                #print(jogo.tabuleiro)
+
+                
+                
+                    
+                #jogo.jogadas(pygame.mouse.get_pos())
+                #funcao_joga(tabuleiro,atualX,atualY,desejadoX,desejadoY)
+        tela.fill(PRETO)
+        jogo.desenha()
+        #funcao_joga(tabuleiro,atualX,atualY,desejadoX,desejadoY)
+        pygame.display.update()
+        clock.tick(60)
+        
+        
+        
+loop_jogo()
+pygame.quit()
+quit()

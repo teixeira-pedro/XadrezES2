@@ -1,6 +1,6 @@
 import pygame
 import time
-import movimentos_pecas
+from movimentos_pecas import *
 #from movimento_pecas.py import *
 import os
 
@@ -44,6 +44,7 @@ def funcao_joga(tabuleiro,atualX,atualY,desejadoX,desejadoY):
         tabuleiro[atualX][atualY] = '0'
 
 
+
 def movimentos_obrigatorios(casa):
     return None
 
@@ -74,8 +75,13 @@ class Jogo:
                             ['p','p','p','p','p','p','p','p'],
                             ['t','c','b','r','a','b','c','t'],
             ]
+
+        def set_tabuleiro(self,novo):
+            self.tabuleiro=novo
         def get_tabuleiro(self):
             return self.tabuleiro
+        def get_peca(self,xy):
+            return self.get_tabuleiro()[xy[0]][xy[1]]
         def get_turno(self):
             return self.turno
         def eh_vez_das_pretas(self):
@@ -192,19 +198,34 @@ class Jogo:
 def loop_jogo():
     sair = False
 
+    
+    
+    
     jogo=Jogo()
-
     while not sair:
+
         for evento in pygame.event.get():
             print(pygame.event.get())
             if evento.type == pygame.QUIT:
                 sair = True
                 pygame.quit()
                 quit()
-            if evento.type == pygame.MOUSEBUTTONDOWN:
-                print(jogo.pixels_2_tabuleiro(pygame.mouse))
-                #jogo.jogadas(pygame.mouse.get_pos())
+            if evento.type == pygame.MOUSEBUTTONDOWN :
+                selecao=jogo.pixels_2_tabuleiro(pygame.mouse)
+                print("selecionado:",selecao,jogo.get_tabuleiro()[selecao[1]][selecao[0]])
+                peca=jogo.get_peca(selecao)
+                print("movimentos possiveis:",movimentos_possiveis_peca(
+                    jogo.tabuleiro,selecao[1],selecao[0]
+                        )
+                      )
 
+                #print(jogo.tabuleiro)
+
+                
+                
+                    
+                #jogo.jogadas(pygame.mouse.get_pos())
+                #funcao_joga(tabuleiro,atualX,atualY,desejadoX,desejadoY)
         tela.fill(PRETO)
         jogo.desenha()
         #funcao_joga(tabuleiro,atualX,atualY,desejadoX,desejadoY)
