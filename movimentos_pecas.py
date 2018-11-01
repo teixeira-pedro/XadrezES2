@@ -268,3 +268,21 @@ def movimento_obrigatorio_cavalo(tabuleiro,x,y):
                 listaPossiveis.remove([i,j])
 
     return listaPossiveis
+
+    
+def movimentos_possiveis_peca(tabuleiro,atualX,atualY):
+    peca = tabuleiro[atualX][atualY]
+    listaPossiveis = []
+    if  (peca == 'p' or peca == 'P'):
+        listaPossiveis = movimento_obrigatorio_peao(tabuleiro,atualX,atualY)
+    elif(peca == 'c' or peca == 'C'):
+        listaPossiveis = movimento_obrigatorio_cavalo(tabuleiro,atualX,atualY)
+    elif(peca == 'r' or peca == 'R'):
+        listaPossiveis = movimento_obrigatorio_rei(tabuleiro,atualX,atualY)
+    elif(peca == 'a' or peca == 'A'):
+        listaPossiveis = movimento_obrigatorio_rainha(tabuleiro,atualX,atualY)
+    elif(peca == 'b' or peca == 'B'):
+        listaPossiveis = movimento_obrigatorio_bispo(tabuleiro,atualX,atualY)
+    elif(peca == 't' or peca == 'T'):
+        listaPossiveis = movimento_obrigatorio_torre(tabuleiro,atualX,atualY)
+    return listaPossiveis
