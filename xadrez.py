@@ -65,7 +65,7 @@ class Jogo:
             # R : rei
             # P : peão
             self.tabuleiro=[
-                            ['T','C','B','R','A','B','C','T'],
+                            ['T','C','B','A','R','B','C','T'],
                             ['P','P','P','P','P','P','P','P'],
                             ['0','0','0','0','0','0','0','0'],
                             ['0','0','0','0','0','0','0','0'],
@@ -159,7 +159,7 @@ class Jogo:
                     if self.imagem_peca(self.get_tabuleiro()[i][j]) :
                         peca=pygame.image.load(self.imagem_peca(self.get_tabuleiro()[i][j]))
                         tela.blit(peca,self.tabuleiro_2_pixels(j,i)[0])
-                        print('desenhando',self.tabuleiro_2_pixels(i,j)[0],self.get_tabuleiro()[i][j])
+                        #print('desenhando',self.tabuleiro_2_pixels(i,j)[0],self.get_tabuleiro()[i][j])
             #for i in range(8):
             #    if i%2 == 0:
             #        matriz.append(['#', '-', '#', '-', '#', '-', '#', '-'])
