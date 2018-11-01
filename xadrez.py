@@ -109,6 +109,8 @@ class Jogo:
         # converte a posição da matriz em pixels para serem exibidos
         def tabuleiro_2_pixels(self,i,j):
             return [(80*i,80*j),((80*i)+80,(80*j)+j)]
+        def pixels_2_tabuleiro(self,pygameobj):
+            return (int((pygameobj.get_pos()[0])/80),int((pygameobj.get_pos()[1])/80))
         def ganhou(self):
             #xeque mate ?????
             return 0
@@ -150,7 +152,7 @@ class Jogo:
                     if self.imagem_peca(self.get_tabuleiro()[i][j]) :
                         peca=pygame.image.load(self.imagem_peca(self.get_tabuleiro()[i][j]))
                         tela.blit(peca,self.tabuleiro_2_pixels(j,i)[0])
-                        print('desenhando',self.tabuleiro_2_pixels(i,j)[0],self.get_tabuleiro()[i][j])
+            #            print('desenhando',self.tabuleiro_2_pixels(i,j)[0],self.get_tabuleiro()[i][j])
             #for i in range(8):
             #    if i%2 == 0:
             #        matriz.append(['#', '-', '#', '-', '#', '-', '#', '-'])
