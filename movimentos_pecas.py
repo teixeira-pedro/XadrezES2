@@ -198,7 +198,7 @@ def movimento_obrigatorio_peao(tabuleiro,x,y):
                     listaPossiveis.append([i,j])
             if(x>=0 and y >=0 and tabuleiro[i][j] != '0'):
                 if(isPecaAliada(tabuleiro,x,y,x+1,y-1)):
-                listaPossiveis.append([i,j])
+                    listaPossiveis.append([i,j])
     return listaPossiveis
 
 def movimento_obrigatorio_cavalo(tabuleiro,x,y):
