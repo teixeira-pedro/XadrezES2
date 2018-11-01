@@ -188,16 +188,16 @@ def movimento_obrigatorio_peao(tabuleiro,x,y):
                 listaPossiveis.append([i,j])
     else:
         if(tabuleiro[x][y].islower()):
-        i = x-1
-        j = y
-        if(i<len(tabuleiro)):
-            if(tabuleiro[i][j] == '0'):
-                listaPossiveis.append([i,j])
-        if(x>=0 and y <len(tabuleiro[0]) and tabuleiro[i][j] != '0'):
-            if(isPecaAliada(tabuleiro,x,y,x+1,y+1)):
-                listaPossiveis.append([i,j])
-        if(x>=0 and y >=0 and tabuleiro[i][j] != '0'):
-            if(isPecaAliada(tabuleiro,x,y,x+1,y-1)):
+            i = x-1
+            j = y
+            if(i<len(tabuleiro)):
+                if(tabuleiro[i][j] == '0'):
+                    listaPossiveis.append([i,j])
+            if(x>=0 and y <len(tabuleiro[0]) and tabuleiro[i][j] != '0'):
+                if(isPecaAliada(tabuleiro,x,y,x+1,y+1)):
+                    listaPossiveis.append([i,j])
+            if(x>=0 and y >=0 and tabuleiro[i][j] != '0'):
+                if(isPecaAliada(tabuleiro,x,y,x+1,y-1)):
                 listaPossiveis.append([i,j])
     return listaPossiveis
 
