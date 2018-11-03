@@ -36,12 +36,6 @@ TAMANHO_PEÇA = 80
 tela = pygame.display.set_mode((640, 640))
 clock = pygame.time.Clock()
 
-def funcao_joga(tabuleiro,atualX,atualY,desejadoX,desejadoY):
-    listaPossiveis = movimentos_possiveis_peca(tabuleiro,atualX,atualY)
-
-    if([desejadoX,desejadoY] in listaPossiveis):
-        tabuleiro[desejadoX][desejadoY] = tabuleiro[atualX][atualY]
-        tabuleiro[atualX][atualY] = '0'
 
 
 
@@ -76,6 +70,12 @@ class Jogo:
                             ['t','c','b','r','a','b','c','t'],
             ]
 
+        def funcao_joga(self,atualX,atualY,desejadoX,desejadoY):
+            listaPossiveis = movimentos_possiveis_peca(self.tabuleiro,atualX,atualY)
+
+            if([desejadoX,desejadoY] in listaPossiveis):
+                self.tabuleiro[desejadoX][desejadoY] = self.tabuleiro[atualX][atualY]
+                self.tabuleiro[atualX][atualY] = '0'
         def set_tabuleiro(self,novo):
             self.tabuleiro=novo
         def get_tabuleiro(self):
@@ -199,30 +199,51 @@ def loop_jogo():
     sair = False
 
     
-    
+    org=[]
     
     jogo=Jogo()
     while not sair:
 
         for evento in pygame.event.get():
-            print(pygame.event.get())
             if evento.type == pygame.QUIT:
                 sair = True
                 pygame.quit()
                 quit()
-            if evento.type == pygame.MOUSEBUTTONDOWN :
-                selecao=jogo.pixels_2_tabuleiro(pygame.mouse)
-                print("selecionado:",selecao,jogo.get_tabuleiro()[selecao[1]][selecao[0]])
-                peca=jogo.get_peca(selecao)
-                print("movimentos possiveis:",movimentos_possiveis_peca(
-                    jogo.tabuleiro,selecao[1],selecao[0]
-                        )
-                      )
+            if evento.type == pygame.MOUSEBUTTONDOWN :                
+                if int(str(evento.button))==1:
+                    selecao_orig=jogo.pixels_2_tabuleiro(pygame.mouse)
+                    print("selecionado:",selecao_orig,jogo.get_tabuleiro()[selecao_orig[1]][selecao_orig[0]])
+                    peca_orig=jogo.get_peca(selecao_orig)
+                    if peca_orig != '0' :
+                        print('selecionei')
+                        org=selecao_orig
+                print("org:",org)
+                if int(str(evento.button))==3 and org!=[]:
+                    selecao=jogo.pixels_2_tabuleiro(pygame.mouse)
+                    print("selecionado:",selecao,jogo.get_tabuleiro()[selecao[1]][selecao[0]])
+                    peca=jogo.get_peca(selecao)
+                    
+                    print('joga')
+                    jogo.funcao_joga(org[1],org[0],selecao[1],selecao[0])
+                    org=[]
+            print(jogo.tabuleiro)
+                        
+
+
+                #print(evento.button)
+                #selecao_orig=jogo.pixels_2_tabuleiro(pygame.mouse)
+                #print("selecionado:",selecao_orig,jogo.get_tabuleiro()[selecao_orig[1]][selecao_orig[0]])
+                #peca_orig=jogo.get_peca(selecao_orig)
+                #print("movimentos possiveis:",movimentos_possiveis_peca(
+                #    jogo.tabuleiro,selecao_orig[1],selecao_orig[0]
+                #        )
+                #      )
 
                 #print(jogo.tabuleiro)
 
                 
                 
+
                     
                 #jogo.jogadas(pygame.mouse.get_pos())
                 #funcao_joga(tabuleiro,atualX,atualY,desejadoX,desejadoY)
