@@ -217,6 +217,7 @@ def loop_jogo():
                     if peca_orig != '0' :
                         print('selecionei')
                         org=selecao_orig
+                print(jogo.tabuleiro)
                 print("org:",org)
                 if int(str(evento.button))==3 and org!=[]:
                     selecao=jogo.pixels_2_tabuleiro(pygame.mouse)
@@ -226,10 +227,7 @@ def loop_jogo():
                     print('joga')
                     jogo.funcao_joga(org[1],org[0],selecao[1],selecao[0])
                     org=[]
-            print(jogo.tabuleiro)
-                        
-
-
+                    print(jogo.tabuleiro)
                 #print(evento.button)
                 #selecao_orig=jogo.pixels_2_tabuleiro(pygame.mouse)
                 #print("selecionado:",selecao_orig,jogo.get_tabuleiro()[selecao_orig[1]][selecao_orig[0]])
@@ -241,10 +239,6 @@ def loop_jogo():
 
                 #print(jogo.tabuleiro)
 
-                
-                
-
-                    
                 #jogo.jogadas(pygame.mouse.get_pos())
                 #funcao_joga(tabuleiro,atualX,atualY,desejadoX,desejadoY)
         tela.fill(PRETO)
