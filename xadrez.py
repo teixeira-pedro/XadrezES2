@@ -1,7 +1,6 @@
 import pygame
 import time
 from movimentos_pecas import *
-#from movimento_pecas.py import *
 import os
 
 pygame.init()
@@ -83,6 +82,10 @@ class Jogo:
                         print("check no Rei Branco RollBack")
                         return moveu
                 self.tabuleiro[desejadoX][desejadoY] = self.tabuleiro[atualX][atualY]
+                if(self.tabuleiro[desejadoX][desejadoY] == 'P' and desejadoX == len(self.tabuleiro[0])-1):
+                    funcao_promocao_Peao(self.tabuleiro,desejadoX,desejadoY,'A')
+                elif(self.tabuleiro[desejadoX][desejadoY] == 'p' and desejadoX == 0):
+                    funcao_promocao_Peao(self.tabuleiro, desejadoX, desejadoY, 'a')
                 self.tabuleiro[atualX][atualY] = '0'
                 moveu  =1
             return moveu

@@ -418,3 +418,7 @@ def verificaCheckReiPecaPreta(tabuleiro,xPeca,yPeca,xDestino,yDestino):
     tabuleiro[xDestino][yDestino] = destino
     tabuleiro[xPeca][yPeca] = peca
     return 0
+
+def funcao_promocao_Peao(tabuleiro,xPeca,yPeca,pecaPromovida):
+    tabuleiro[xPeca][yPeca] = pecaPromovida
+    return tabuleiro
