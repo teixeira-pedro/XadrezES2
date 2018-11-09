@@ -72,10 +72,20 @@ class Jogo:
 
         def funcao_joga(self,atualX,atualY,desejadoX,desejadoY):
             listaPossiveis = movimentos_possiveis_peca(self.tabuleiro,atualX,atualY)
-
+            moveu = 0
             if([desejadoX,desejadoY] in listaPossiveis):
+                if(isPreta(self.tabuleiro,atualX,atualY)):
+                    if(verificaCheckReiPecaPreta(self.tabuleiro,atualX,atualY,desejadoX,desejadoY)):
+                        print ("Check no Rei Preto RollBack")
+                        return moveu
+                else:
+                    if(verificaCheckReiPecaBranca(self.tabuleiro, atualX, atualY, desejadoX, desejadoY)):
+                        print("check no Rei Branco RollBack")
+                        return moveu
                 self.tabuleiro[desejadoX][desejadoY] = self.tabuleiro[atualX][atualY]
                 self.tabuleiro[atualX][atualY] = '0'
+                moveu  =1
+            return moveu
         def set_tabuleiro(self,novo):
             self.tabuleiro=novo
         def get_tabuleiro(self):
@@ -165,36 +175,6 @@ class Jogo:
                     if self.imagem_peca(self.get_tabuleiro()[i][j]) :
                         peca=pygame.image.load(self.imagem_peca(self.get_tabuleiro()[i][j]))
                         tela.blit(peca,self.tabuleiro_2_pixels(j,i)[0])
-                        #print('desenhando',self.tabuleiro_2_pixels(i,j)[0],self.get_tabuleiro()[i][j])
-            #for i in range(8):
-            #    if i%2 == 0:
-            #        matriz.append(['#', '-', '#', '-', '#', '-', '#', '-'])
-            #    else:
-            #        matriz.append(['-', '#', '-', '#', '-', '#', '-', '#'])
-            #y=0
-            #for l in range(len(matriz)):
-            #    x=0
-            #    for c in range(len(matriz[l])):
-                    #if matriz[l][c]=='#':
-                    #    pygame.draw.rect(tela, VERDE_ESCURO, (x, y, TAMANHO_QUADRADO, TAMANHO_QUADRADO))
-                    #else:
-                    #    pygame.draw.rect(tela, BEGE, (x, y, TAMANHO_QUADRADO, TAMANHO_QUADRADO))
-                    #img=pygame.image.load(self.imagem_peca(self.tabuleiro[0][0]))
-            #        x += TAMANHO_QUADRADO
-            #    y += TAMANHO_QUADRADO
-            #yy=0
-            
-            #print(self.imagem_peca(self.tabuleiro[0][0]))
-            #for i in range(len(self.tabuleiro)):
-            #    xx=0
-            #    for j in range(len(self.tabuleiro[i])):
-            #        if self.imagem_peca(self.tabuleiro[i][j])!= None :
-            #            # imprimir peças em suas posicoes
-            #            self.imagem_peca(self.tabuleiro[i][j])
-            #        #print(image)
-            #        xx += TAMANHO_QUADRADO
-            #    yy += TAMANHO_QUADRADO
-
 def loop_jogo():
     sair = False
 
@@ -208,30 +188,29 @@ def loop_jogo():
                 sair = True
                 pygame.quit()
                 quit()
-            if evento.type == pygame.MOUSEBUTTONDOWN :                
-                if int(str(evento.button))==1 and org == []:
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if int(str(evento.button)) == 1 and org == []:
                     selecao_orig=jogo.pixels_2_tabuleiro(pygame.mouse)
-                    print("selecionado:",selecao_orig,[selecao_orig[1],selecao_orig[0]])
-                    peca_orig=jogo.get_peca( [selecao_orig[1],selecao_orig[0]])
-                    if peca_orig != '0' :
+                    print("selecionado:", selecao_orig, [selecao_orig[1], selecao_orig[0]])
+                    peca_orig = jogo.get_peca([selecao_orig[1], selecao_orig[0]])
+                    if peca_orig != '0':
                         print('selecionei')
                         org=selecao_orig
                     break
                 print(jogo.tabuleiro)
-                print("org:",org)
-                if  int(str(evento.button))==1 and org!=[]:
-                    selecao=jogo.pixels_2_tabuleiro(pygame.mouse)
-                    print("selecionado:",selecao,jogo.get_tabuleiro()[selecao[1]][selecao[0]])
+                print("org:", org)
+                if int(str(evento.button)) == 1 and org != []:
+                    selecao = jogo.pixels_2_tabuleiro(pygame.mouse)
+                    print("selecionado:", selecao, jogo.get_tabuleiro()[selecao[1]][selecao[0]])
                     print('joga')
-                    jogo.funcao_joga(org[1],org[0],selecao[1],selecao[0])
-                    org=[]
+                    jogo.funcao_joga(org[1], org[0], selecao[1], selecao[0])
+                    org = []
                     print(jogo.tabuleiro)
                     break
         tela.fill(PRETO)
         jogo.desenha()
         pygame.display.update()
         clock.tick(60)
-            
 loop_jogo()
 pygame.quit()
 quit()

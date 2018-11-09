@@ -1,8 +1,13 @@
+def isPreta(tabuleiro,xPecaAtual,yPecaAtual):
+    pecaAtual = tabuleiro[xPecaAtual][yPecaAtual]
+    if(pecaAtual.isupper()):
+        return 1
+    return 0
 def isPecaAliada(tabuleiro,xPecaAtual,yPecaAtual,xPecaAnalisada,yPecaAnalisada):
     pecaAtual = tabuleiro[xPecaAtual][yPecaAtual]
     pecaAnalisada = tabuleiro[xPecaAnalisada][yPecaAnalisada]
     if pecaAtual == '0':
-        return false
+        return 0
     if pecaAtual.isupper():
         if pecaAnalisada.isupper():
             return 1  #caso das duas serem UPPERCASE
@@ -180,14 +185,14 @@ def movimento_obrigatorio_peao(tabuleiro,x,y):
         if(i<len(tabuleiro)):
             if(tabuleiro[i][j] == '0'):
                 listaPossiveis.append([i,j])
-        if(x==1):
+        if(x==1 and tabuleiro[i][j] == '0'):
             listaPossiveis.append([i+1,j])
-        if(x<len(tabuleiro) and y <len(tabuleiro[0]) and tabuleiro[i][j] != '0'):
-            if(isPecaAliada(tabuleiro,x,y,x+1,y+1)):
-                listaPossiveis.append([i,j])
-        if(x<len(tabuleiro) and y >=0 and tabuleiro[i][j] != '0'):
-            if(isPecaAliada(tabuleiro,x,y,x+1,y-1)):
-                listaPossiveis.append([i,j])
+        if(i<len(tabuleiro) and y+1 <len(tabuleiro[0]) and tabuleiro[i][y+1] != '0'):
+            if( not isPecaAliada(tabuleiro,x,y,i,y+1)):
+                listaPossiveis.append([i,y+1])
+        if(i<len(tabuleiro) and y-1 >=0 and tabuleiro[i][y-1] != '0'):
+            if( not isPecaAliada(tabuleiro,x,y,i,y-1)):
+                listaPossiveis.append([i,y-1])
     else:
         if(tabuleiro[x][y].islower()):
             i = x-1
@@ -195,14 +200,14 @@ def movimento_obrigatorio_peao(tabuleiro,x,y):
             if(i<len(tabuleiro)):
                 if(tabuleiro[i][j] == '0'):
                     listaPossiveis.append([i,j])
-            if(x==6):
+            if(x==6 and tabuleiro[i-1][j] == '0'):
                 listaPossiveis.append([i-1,j])
-            if(x>=0 and y <len(tabuleiro[0]) and tabuleiro[i][j] != '0'):
-                if(isPecaAliada(tabuleiro,x,y,x+1,y+1)):
-                    listaPossiveis.append([i,j])
-            if(x>=0 and y >=0 and tabuleiro[i][j] != '0'):
-                if(isPecaAliada(tabuleiro,x,y,x+1,y-1)):
-                    listaPossiveis.append([i,j])
+            if(i>=0 and j+1 <len(tabuleiro[0]) and tabuleiro[i][j+1] != '0'):
+                if(not isPecaAliada(tabuleiro,x,y,i,j+1)):
+                    listaPossiveis.append([i,j+1])
+            if(i>=0 and j-1 >=0 and tabuleiro[i][j-1] != '0'):
+                if( not isPecaAliada(tabuleiro,x,y,i,j-1)):
+                    listaPossiveis.append([i,j-1])
     return listaPossiveis
 
 def movimento_obrigatorio_cavalo(tabuleiro,x,y):
@@ -290,3 +295,126 @@ def movimentos_possiveis_peca(tabuleiro,atualX,atualY):
     elif(peca == 't' or peca == 'T'):
         listaPossiveis = movimento_obrigatorio_torre(tabuleiro,atualX,atualY)
     return listaPossiveis
+
+def analisaSePecaAmeaca(tabuleiro,lista,tipoPeca):
+    for posicao in lista:
+        if(tabuleiro[posicao[0]][posicao[1]] == tipoPeca):
+            return 1
+    return 0
+
+def listaMovimentosTodosOsPeoesInimigos(tabuleiro,posRei):
+    lista = []
+    for i in range(len(tabuleiro)):
+        for j in range(len(tabuleiro[0])):
+            if (not isPecaAliada(tabuleiro, posRei[0], posRei[1], i, j)):
+                if(tabuleiro[i][j] == 'P' or tabuleiro[i][j] == 'p'):
+                    for movimento in movimento_obrigatorio_peao(tabuleiro,i,j):
+                        lista.append(movimento)
+    return lista
+def verificaCheckReiPecaBranca(tabuleiro,xPeca,yPeca,xDestino,yDestino):
+    peca = tabuleiro[xPeca][yPeca]
+    destino = tabuleiro[xDestino][yDestino]
+    tabuleiro[xDestino][yDestino] = peca
+    tabuleiro[xPeca][yPeca] = '0'
+    posReiBranco = []
+    for i in range(len(tabuleiro)):
+        for j in range(len(tabuleiro[0])):
+            if tabuleiro[i][j] == 'r':
+                posReiBranco = [i, j]
+    #analisandoCavalo
+    listaParaAnalise = movimento_obrigatorio_cavalo(tabuleiro,posReiBranco[0],posReiBranco[1])
+    if(analisaSePecaAmeaca(tabuleiro,listaParaAnalise,'C')):
+        tabuleiro[xDestino][yDestino] = destino
+        tabuleiro[xPeca][yPeca] = peca
+        return 1
+
+    #analisandoRainha
+    listaParaAnalise = movimento_obrigatorio_rainha(tabuleiro,posReiBranco[0],posReiBranco[1])
+    if(analisaSePecaAmeaca(tabuleiro,listaParaAnalise,'A')):
+        tabuleiro[xDestino][yDestino] = destino
+        tabuleiro[xPeca][yPeca] = peca
+        return 1
+
+    #analisandoBispo
+    listaParaAnalise = movimento_obrigatorio_bispo(tabuleiro,posReiBranco[0],posReiBranco[1])
+    if(analisaSePecaAmeaca(tabuleiro,listaParaAnalise,'B')):
+        tabuleiro[xDestino][yDestino] = destino
+        tabuleiro[xPeca][yPeca] = peca
+        return 1
+
+    #analisandoTorre
+    listaParaAnalise = movimento_obrigatorio_torre(tabuleiro,posReiBranco[0],posReiBranco[1])
+    if(analisaSePecaAmeaca(tabuleiro,listaParaAnalise,'T')):
+        return 1
+
+    #analisandoRei
+    listaParaAnalise = movimento_obrigatorio_rei(tabuleiro,posReiBranco[0],posReiBranco[1])
+    if(analisaSePecaAmeaca(tabuleiro, listaParaAnalise, 'R')):
+        tabuleiro[xDestino][yDestino] = destino
+        tabuleiro[xPeca][yPeca] = peca
+        return 1
+
+    #analisandoPeao
+    listaParaAnalise = listaMovimentosTodosOsPeoesInimigos(tabuleiro,posReiBranco)
+    if(analisaSePecaAmeaca(tabuleiro,listaParaAnalise,'r')):
+        tabuleiro[xDestino][yDestino] = destino
+        tabuleiro[xPeca][yPeca] = peca
+        return 1
+    tabuleiro[xDestino][yDestino] = destino
+    tabuleiro[xPeca][yPeca] = peca
+    return 0
+
+def verificaCheckReiPecaPreta(tabuleiro,xPeca,yPeca,xDestino,yDestino):
+    peca = tabuleiro[xPeca][yPeca]
+    destino = tabuleiro[xDestino][yDestino]
+    tabuleiro[xDestino][yDestino] = peca
+    tabuleiro[xPeca][yPeca] = '0'
+    posReiPreto = []
+    for i in range(len(tabuleiro)):
+        for j in range(len(tabuleiro[0])):
+            if tabuleiro[i][j] == 'R':
+                posReiPreto = [i, j]
+    #analisandoCavalo
+    listaParaAnalise = movimento_obrigatorio_cavalo(tabuleiro,posReiPreto[0],posReiPreto[1])
+    if(analisaSePecaAmeaca(tabuleiro,listaParaAnalise,'c')):
+        tabuleiro[xDestino][yDestino] = destino
+        tabuleiro[xPeca][yPeca] = peca
+        return 1
+
+    #analisandoRainha
+    listaParaAnalise = movimento_obrigatorio_rainha(tabuleiro,posReiPreto[0],posReiPreto[1])
+    if(analisaSePecaAmeaca(tabuleiro,listaParaAnalise,'a')):
+        tabuleiro[xDestino][yDestino] = destino
+        tabuleiro[xPeca][yPeca] = peca
+        return 1
+
+    #analisandoBispo
+    listaParaAnalise = movimento_obrigatorio_bispo(tabuleiro,posReiPreto[0],posReiPreto[1])
+    if(analisaSePecaAmeaca(tabuleiro,listaParaAnalise,'b')):
+        tabuleiro[xDestino][yDestino] = destino
+        tabuleiro[xPeca][yPeca] = peca
+        return 1
+
+    #analisandoTorre
+    listaParaAnalise = movimento_obrigatorio_torre(tabuleiro,posReiPreto[0],posReiPreto[1])
+    if(analisaSePecaAmeaca(tabuleiro,listaParaAnalise,'t')):
+        tabuleiro[xDestino][yDestino] = destino
+        tabuleiro[xPeca][yPeca] = peca
+        return 1
+
+    #analisandoRei
+    listaParaAnalise = movimento_obrigatorio_rei(tabuleiro,posReiPreto[0],posReiPreto[1])
+    if(analisaSePecaAmeaca(tabuleiro, listaParaAnalise, 'r')):
+        tabuleiro[xDestino][yDestino] = destino
+        tabuleiro[xPeca][yPeca] = peca
+        return 1
+
+    #analisandoPeao
+    listaParaAnalise = listaMovimentosTodosOsPeoesInimigos(tabuleiro,posReiPreto)
+    if(analisaSePecaAmeaca(tabuleiro,listaParaAnalise,'R')):
+        tabuleiro[xDestino][yDestino] = destino
+        tabuleiro[xPeca][yPeca] = peca
+        return 1
+    tabuleiro[xDestino][yDestino] = destino
+    tabuleiro[xPeca][yPeca] = peca
+    return 0
