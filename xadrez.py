@@ -60,7 +60,7 @@ class Jogo:
             # R : rei
             # P : peão
             self.tabuleiro=[
-                            ['T','C','B','A','R','B','C','T'],
+                            ['T','C','B','R','A','B','C','T'],
                             ['P','P','P','P','P','P','P','P'],
                             ['0','0','0','0','0','0','0','0'],
                             ['0','0','0','0','0','0','0','0'],
@@ -187,6 +187,8 @@ def loop_jogo():
     
     jogo=Jogo()
     while not sair:
+        if(verificaFimDeJogo(jogo.tabuleiro,jogo.turno)):
+                            sair = True
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 sair = True
