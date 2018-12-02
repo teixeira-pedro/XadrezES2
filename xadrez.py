@@ -187,6 +187,8 @@ def loop_jogo():
     
     jogo=Jogo()
     while not sair:
+        if(verificaFimDeJogo(jogo.tabuleiro,jogo.turno)):
+                            sair = True
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 sair = True
@@ -210,8 +212,6 @@ def loop_jogo():
                     print('joga')
                     if(jogo.funcao_joga(org[1], org[0], selecao[1], selecao[0])):
                         jogo.turno +=1
-                        if(verificaFimDeJogo(jogo.tabuleiro,jogo.turno)):
-                            sair = True
                     org = []
                     print(jogo.tabuleiro)
                     break
