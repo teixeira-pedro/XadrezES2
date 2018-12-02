@@ -1,5 +1,8 @@
 import unittest
 
+# para executar os testes unitários, basta rodar no terminal 
+# python -m unittest -v unit_tests.py
+
 class TestStringMethods(unittest.TestCase):
 
     def test_upper(self):
