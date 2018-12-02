@@ -60,7 +60,7 @@ class Jogo:
             # R : rei
             # P : peão
             self.tabuleiro=[
-                            ['T','C','B','A','R','B','C','T'],
+                            ['T','C','B','R','A','B','C','T'],
                             ['P','P','P','P','P','P','P','P'],
                             ['0','0','0','0','0','0','0','0'],
                             ['0','0','0','0','0','0','0','0'],
@@ -210,6 +210,8 @@ def loop_jogo():
                     print('joga')
                     if(jogo.funcao_joga(org[1], org[0], selecao[1], selecao[0])):
                         jogo.turno +=1
+                        if(verificaFimDeJogo(jogo.tabuleiro,jogo.turno)):
+                            sair = True
                     org = []
                     print(jogo.tabuleiro)
                     break
