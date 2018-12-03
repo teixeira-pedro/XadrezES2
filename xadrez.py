@@ -3,6 +3,8 @@ import time
 from movimentos_pecas import *
 #from movimento_pecas.py import *
 import os
+from math import sqrt
+from random import randint
 
 pygame.init()
 
@@ -30,12 +32,106 @@ CORAL = (240,128,128)
 VERDE_CLARO = (0, 255, 0)
 TAMANHO_QUADRADO = 80
 TAMANHO_PEÇA = 80
+AMARELO_HIGHLIGHT = (255,215,0)
 
+INFINITO = float("inf")
 
 
 tela = pygame.display.set_mode((640, 640))
 clock = pygame.time.Clock()
 
+#funcao auxiliar
+def in_matriz(proc,m):
+     for linha in m:
+             if proc in linha:
+                     return True
+     return False
+
+
+#------------------------------------------------------funções da IA--------------------------------------
+
+#UTILITY, FUNÇÃO QUE DIZ QUEM ESTÁ "MELHOR" NO JOGO :
+#       valores tendendo à + infinito : PRETAS se dando bem
+#       valores tendendo à - infinito : as brancas
+#       0 : equilibrio de jogo
+
+#Foram utilizados três critérios a ponderar : quantidade de peças,
+#                                             peso de cada peça
+#                                             proximidade de cada peça em relação ao rei inimigo
+
+# assim, a "pontuação" de cada lado é dada pela soma de todas as peças do jogo vezes os pesos relacionados
+#é extraido a "pontuação" de cada lado, e se subtrai, a diferença diz quem ta melhor no jogo (+ PRETAS) (- BRANCAS) (0 EQUILIBRIO)
+
+#pesos : P = 1  ; P (perto da casa de promoção (nas casas 4,5 ou 6) ) = 4
+#        C = 5  ; T ou B = 10 ;  A (rainha) = 16 ; R = 20
+
+def UTILITY(T):
+    pesoP=0
+    pesoB=0
+    for i in range(len(T)):
+        for j in range(len(T[i])):
+            pesoB+= ( DPRA([i,j],localiza_rei_adversario(T,'r'))*(
+                        (1*'p'==T[i][j])+(4*('p'==T[i][j] and i in[4,5,6]))+(5*'c'==T[i][j])+(10*((T[i][j]== 't') or (T[i][j]=='b')))+
+                                                                  (16*('a'==T[i][j]))+(20*('r'==T[i][j]))
+                     )
+            )
+            pesoB+= ( DPRA([i,j],localiza_rei_adversario(T,'R'))*(
+                        (1*'P'==T[i][j])+(4*('P'==T[i][j] and i in[4,5,6]))+(5*'C'==T[i][j])+(10*((T[i][j]== 'T') or (T[i][j]=='B')))+
+                                                      (16*('A'==T[i][j]))+(20*('R'==T[i][j]))
+                     )
+            )
+    return pesoP-pesoB
+
+# funcao auxiliar DPRA "Distancia Para Rei Adversario" calcula a distancia pro rei adversario
+
+def DPRA(p,RA):
+    return sqrt((abs(RA[0]-p[0])**2)+(abs(RA[1]-p[1])**2))
+
+# funcao auxiliar localiza rei adversario, o nome já explica.
+
+def localiza_rei_adversario(T,rei_jogador_atual):
+    for i in range(len(T)):
+        for j in range(len(T[i])):
+            if rei_jogador_atual=='r' and T[i][j]=='R':
+                return [i,j]
+            if rei_jogador_atual=='R' and T[i][j]=='r':
+                return [i,j]
+
+# MIN-MAX-Decisão(tabuleiro)
+
+# seria "a" uma ação ? isto é, uma jogada
+
+#tomara a decisao apos calcular as possibilidades de perda ou ganho de uma jogada aleatoria
+def MIN_MAX_Decisao(tabuleiro):# como decidir?
+    return i_999(MIN_VALOR(RESULTADO(tabuleiro,a)))
+
+def MAX_VALUE(tabuleiro):
+    if TEST_ENC(tabuleiro):
+        return UTILITY(tabuleiro)
+    V= 0 - INFINITO
+    for A in ACOES(tabuleiro):
+        v=max(v,MIN_VALUE(RESULTADO(tabuleiro,A)))
+    return V
+
+def MIN_VALUE(estado):
+    if TEST_ENC(estado):
+        return UTILITY(estado)
+    v= INFINITO
+    for acao in ACOES(estado):
+        v = min(v,MAX_VALUE(RESULTADO(estado,acao)))
+
+#aleatoriamente o pc selecionará uma peça e retornara a as ações disponiveis para a peca
+def ACOES(jogo,tabuleiro):
+    kk=True
+    while kk:
+        kk=tabuleiro[casa_selecionada_aleatoria[0]]casa_selecionada_aleatoria[1] != '0' and tabuleiro[casa_selecionada_aleatoria[0]]casa_selecionada_aleatoria[1].isupper()
+        # se a peça pega aleatoriamente é uma casa não vazia e não for uma peça preta
+        casa_selecionada_aleatoria=[randint(0,7),randint(0,7)] #procure por uma peça nova
+    #são jogadas disponiveis (possiveis) a partir de uma peca, selecionada aleatoriamente
+    return jogo.movimentos_possiveis_peca(tabuleiro,casa_selecionada_aleatoria[0],casa_selecionada_aleatoria[1])
+
+
+#-------------------------------------------------------funções da IA--------------------------------------
 
 
 
@@ -44,6 +140,7 @@ def movimentos_obrigatorios(casa):
 
 #toma conta do jogo
 class Jogo:
+    
     # a função init é a construtora da classe
         def __init__(self):
             self.estado='jogando'
@@ -127,6 +224,13 @@ class Jogo:
             self.turno=self.turno+1
         #realiza a promoção de peças, dada a posicao da peça atual e
         #a nova desehada
+        def promocao(self):
+            for i in range(len(self.tabuleiro)):
+                for j in range(len(self.tabuleiro[i])):
+                    if self.tabuleiro[i][j]=='p' and 0==i:
+                        self.tabuleiro[i][j]='a' #vira rainha
+                    if self.tabuleiro[i][j]=='P' and i==7:
+                        self.tabuleiro[i][j]='A' #vira rainha
         def promove(self,i,j,nova):
             # não vale promover pra peão ou rei
             if (nova!='p' and nova!='r' and nova!='P' and nova!='R'):
@@ -138,8 +242,33 @@ class Jogo:
         # converte a posição da matriz em pixels para serem exibidos
         def tabuleiro_2_pixels(self,i,j):
             return [(80*i,80*j),((80*i)+80,(80*j)+j)]
+        
         def ganhou(self):
-            #xeque mate ?????
+            if not in_matriz('r'):
+                return 'P'
+            elif not in_matriz('R'):
+                return 'b'
+            elif self.empatou():
+                return 'e'
+            else:
+                return None
+
+        def empatou(self):
+            T=self.get_tabuleiro()
+            #se só houver zeros e os reis, empatou
+            #isto é, se a qtd de casas vazias (zero) é 62 e há dois reis
+            cont=0
+            reis =0
+            for i in range(len(T)):
+                for j in range(len(T[i])):
+                    if T[i][j]=='0' :
+                        cont=cont+1
+                    if T[i][j].lower()=='r':
+                        reis=reis+1
+            return (cont==62) and (reis==2)
+    
+    
+            
             return 0
         #pega o endereco do png da peça
         def imagem_peca(self,peca):
@@ -167,24 +296,54 @@ class Jogo:
                 return os.getcwd()+'\\imgs\\cavalo_branco.png'                
             if peca=='C':
                 return os.getcwd()+'\\imgs\\cavalo_preto.png'
+        # desenha(peça selecionada,jogo.ganhou())
+        def desenha(self,selecionado,venceu):
+            if venceu=='P':
+                bg=pygame.image.load(os.getcwd()+'\\imgs\\bg_ganhou_P.png')
+                tela.blit(bg,(0,0))
+                clock.tick(10)
+                pygame.quit()
+                quit()
+            elif venceu=='b':
+                bg=pygame.image.load(os.getcwd()+'\\imgs\\bg_ganhou_b.png')
+                tela.blit(bg,(0,0))
+                clock.tick(10)
+                pygame.quit()
+                quit()
+            elif venceu=='e':
+                bg=pygame.image.load(os.getcwd()+'\\imgs\\bg_empate.png')
+                tela.blit(bg,(0,0))
+                clock.tick(10)
+                pygame.quit()
+                quit()
+            else:
+                matriz=[]
+                #desenhando fundo
+                bg=pygame.image.load(FUNDO)
+                tela.blit(bg,(0,0))
+                #DESENHANDO HIGHLIGHT
+                k=None###############QUEM É SELECIONADO? É selecao_orig CHAMAR NORMALMENTE TESTAR
+                RECT=self.tabuleiro_2_pixels(selecionado[1],selecionado[0])
+                if selecionado :
+                    k=pygame.draw.rect(tela,AMARELO_HIGHLIGHT,[RECT[0][0],RECT[0][1],RECT[1][0],RECT[1][1]])
+                #desenhando pecas
+                for i in range(len(self.get_tabuleiro())):
+                    for j in range(len(self.get_tabuleiro()[i])):
+                        if self.imagem_peca(self.get_tabuleiro()[i][j]) :
+                            peca=pygame.image.load(self.imagem_peca(self.get_tabuleiro()[i][j]))
+                            tela.blit(peca,self.tabuleiro_2_pixels(j,i)[0])
 
-        def desenha(self):
-            matriz=[]
-            #desenhando fundo
-            bg=pygame.image.load(FUNDO)
-            tela.blit(bg,(0,0))
-            #desenhando pecas
-            for i in range(len(self.get_tabuleiro())):
-                for j in range(len(self.get_tabuleiro()[i])):
-                    if self.imagem_peca(self.get_tabuleiro()[i][j]) :
-                        peca=pygame.image.load(self.imagem_peca(self.get_tabuleiro()[i][j]))
-                        tela.blit(peca,self.tabuleiro_2_pixels(j,i)[0])
+
+
+
+
+
 def loop_jogo():
     sair = False
 
     
     org=[]
-    
+    selecionado=
     jogo=Jogo()
     while not sair:
         if(verificaFimDeJogo(jogo.tabuleiro,jogo.turno)):
@@ -216,7 +375,8 @@ def loop_jogo():
                     print(jogo.tabuleiro)
                     break
         tela.fill(PRETO)
-        jogo.desenha()
+        jogo.promocao() #LISTENER VERIFICANDO SE ALGUEM É APTO A PROMOÇÃO
+        jogo.desenha(org,jogo.ganhou())# desenha([i,] da peça selecionada,jogo.ganhou())
         pygame.display.update()
         clock.tick(60)
 loop_jogo()
