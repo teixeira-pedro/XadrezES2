@@ -24,7 +24,8 @@ def tela_promocao():
     Button(master,text='Confirma',command=pega_promocao).grid(row=3, column=1, sticky=W, pady=4)
     master.quit()
 
-
+def casa_aleatoria():
+    return [randint(0,7),randint(0,7)]
 
 
 FUNDO=os.getcwd()+'\\imgs\\bg.png'
@@ -388,8 +389,62 @@ class Jogo:
                         tela.blit(peca,self.tabuleiro_2_pixels(j,i)[0])
 
 
+def eh_preta(tabuleiro,i,j):
+    return tabuleiro[i][j].isupper() and (not eh_vazio(tabuleiro,i,j))
 
+def eh_branca(tabuleiro,i,j):
+    return tabuleiro[i][j].islower() and (not eh_vazio(tabuleiro,i,j))
 
+def eh_vazio(tabuleiro,i,j):
+    return tabuleiro[i][j] == '0'
+
+def ja_acabou_pecas_restantes_possiveis(pecas_restantes):
+    for peca in pecas_restantes:
+        if peca[2]==False:
+            return False
+    return True
+
+def jogada_IA_nivel_0(jogo):
+    pecas_restantes=[]
+    T=jogo.get_tabuleiro()
+    for i in range(len(T)):
+        for j in range(len(T[i])):
+            if eh_preta(T,i,j):
+                #False : Marcação de que já foi lido pelo verificador da IA
+                pecas_restantes.append([i,j,False])
+
+    id_peca=randint(0,len(pecas_restantes)-1)
+    c_aleat=pecas_restantes[id_peca]
+    pecas_restantes[id_peca][2]=True
+    listaPossiveis=[]
+    while listaPossiveis != [] or (not ja_acabou_pecas_restantes_possiveis(pecas_restantes)):
+        listaPossiveis = movimentos_possiveis_peca(jogo.tabuleiro, c_aleat[0], c_aleat[1])
+        id_peca = randint(0, len(pecas_restantes) - 1)
+        c_aleat = pecas_restantes[id_peca]
+        pecas_restantes[id_peca][2] = True
+    if (ja_acabou_pecas_restantes_possiveis(pecas_restantes)):
+        return 0
+            #nao ha movimentos possiveis, dentre as pecas selecionadas
+        #senao, foi selecionado uma lista com movimentos possiveis de uma peca
+        # c_aleat guarda a peca e lista_possiveis, as jogadas dessa peca possiveis
+    id_jogada= randint(0, len(listaPossiveis) - 1)
+    desejado=listaPossiveis[id_jogada]
+    moveu = 0
+            #if ([desejadoX, desejadoY] in listaPossiveis):
+                #if (isPreta(self.tabuleiro, atualX, atualY)):
+    if (verificaCheckReiPecaPreta(self.tabuleiro, c_aleat[0], c_aleat[1], desejado[0], desejado[1])):
+        print("Check no Rei Preto RollBack")
+        print('movimentos possiveis *******', listaPossiveis)
+        jogo.estado_xeque = 'XP'
+        return moveu
+    else:
+        jogo.estado_xeque = ''
+    jogo.tabuleiro[desejado[0][desejado[1]]] = jogo.tabuleiro[c_aleat[0]][c_aleat[1]]
+    if (jogo.tabuleiro[desejado[0][desejado[1]]]  == 'P' and desejado[1] == len(jogo.tabuleiro[0]) - 1):
+        funcao_promocao_Peao(jogo.tabuleiro, desejado[0], desejado[1], 'A')
+    self.tabuleiro[c_aleat[0]][c_aleat[1]] = '0'
+    moveu = 1
+    return moveu
 
 
 def loop_jogo():
@@ -432,6 +487,7 @@ def loop_jogo():
                 if int(str(evento.button)) == 1 and org == []:
                     selecao_orig=jogo.pixels_2_tabuleiro(pygame.mouse)
                     if(jogo.turno % 2 == 1 and jogo.tabuleiro[selecao_orig[1]][selecao_orig[0]].islower()) or (jogo.turno % 2 == 0 and jogo.tabuleiro[selecao_orig[1]][selecao_orig[0]].isupper()):
+                        print('VEZ DAS PRETAS')
                         print("selecionado:", selecao_orig, [selecao_orig[1], selecao_orig[0]])
                         peca_orig = jogo.get_peca([selecao_orig[1], selecao_orig[0]])
                         if peca_orig != '0':
