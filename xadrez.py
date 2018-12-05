@@ -7,8 +7,24 @@ import platform
 from math import sqrt
 from random import randint
 import sys
+from tkinter import *
 
 pygame.init()
+
+#como utilizar essa janela no meio da promoção???
+def pega_promocao():
+    return e1.get()
+
+def tela_promocao():
+    master=Tk()
+    Label(master,text='inisra a seguir para qual peça promover:').grid(row=0)
+    Label(master,text='[R]ainha, [B]ispo, [T]orre, [C]avalo').grid(row=1)
+    e1=Entry(master)
+    e1.grid(row=1,column=1)
+    Button(master,text='Confirma',command=pega_promocao).grid(row=3, column=1, sticky=W, pady=4)
+    master.quit()
+
+
 
 
 FUNDO=os.getcwd()+'\\imgs\\bg.png'
