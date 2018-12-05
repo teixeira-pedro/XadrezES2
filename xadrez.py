@@ -3,13 +3,16 @@ import time
 from movimentos_pecas import *
 #from movimento_pecas.py import *
 import os
+import platform
 from math import sqrt
 from random import randint
+import sys
 
 pygame.init()
 
 
 FUNDO=os.getcwd()+'\\imgs\\bg.png'
+FUNDO_LINUX_MAC_OSX=FUNDO.replace('\\','/')
 
 LARGURA = 640
 ALTURA = 640
@@ -46,6 +49,13 @@ def in_matriz(proc,m):
              if proc in linha:
                      return True
      return False
+
+
+def convert_platform(estado):
+    if platform.system().lower() != 'windows':
+        return estado.replace('\\', '/')
+    else:
+        return estado
 
 
 #------------------------------------------------------funções da IA--------------------------------------
@@ -124,7 +134,7 @@ def MIN_VALUE(estado):
 def ACOES(jogo,tabuleiro):
     kk=True
     while kk:
-        kk=tabuleiro[casa_selecionada_aleatoria[0]]casa_selecionada_aleatoria[1] != '0' and tabuleiro[casa_selecionada_aleatoria[0]]casa_selecionada_aleatoria[1].isupper()
+        kk=tabuleiro[casa_selecionada_aleatoria[0]][casa_selecionada_aleatoria[1]] != '0' and tabuleiro[casa_selecionada_aleatoria[0]][casa_selecionada_aleatoria[1]].isupper()
         # se a peça pega aleatoriamente é uma casa não vazia e não for uma peça preta
         casa_selecionada_aleatoria=[randint(0,7),randint(0,7)] #procure por uma peça nova
     #são jogadas disponiveis (possiveis) a partir de uma peca, selecionada aleatoriamente
@@ -149,6 +159,8 @@ class Jogo:
             self.turno=1
             self.casa_selecionada=[]
             self.jogadores=('j','J')
+            self.estado_xeque=''
+            #'XP' (xeque preto) 'XB' (xeque branco)
             #CAPS LOCK : PRETO ; sem caps lock : branco
             # T : torre
             # C : cavalo
@@ -174,11 +186,19 @@ class Jogo:
                 if(isPreta(self.tabuleiro,atualX,atualY)):
                     if(verificaCheckReiPecaPreta(self.tabuleiro,atualX,atualY,desejadoX,desejadoY)):
                         print ("Check no Rei Preto RollBack")
+                        print('movimentos possiveis *******',listaPossiveis)
+                        self.estado_xeque='XP'
                         return moveu
+                    else:
+                        self.estado_xeque=''
                 else:
                     if(verificaCheckReiPecaBranca(self.tabuleiro, atualX, atualY, desejadoX, desejadoY)):
                         print("check no Rei Branco RollBack")
+                        print('movimentos possiveis *******', listaPossiveis)
+                        self.estado_xeque = 'XB'
                         return moveu
+                    else:
+                        self.estado_xeque=''
                 self.tabuleiro[desejadoX][desejadoY] = self.tabuleiro[atualX][atualY]
                 if(self.tabuleiro[desejadoX][desejadoY] == 'P' and desejadoX == len(self.tabuleiro[0])-1):
                     funcao_promocao_Peao(self.tabuleiro,desejadoX,desejadoY,'A')
@@ -244,9 +264,9 @@ class Jogo:
             return [(80*i,80*j),((80*i)+80,(80*j)+j)]
         
         def ganhou(self):
-            if not in_matriz('r'):
+            if not in_matriz('r',self.get_tabuleiro()):
                 return 'P'
-            elif not in_matriz('R'):
+            elif not in_matriz('R',self.get_tabuleiro()):
                 return 'b'
             elif self.empatou():
                 return 'e'
@@ -271,9 +291,18 @@ class Jogo:
             
             return 0
         #pega o endereco do png da peça
+
+        def imagem_peca_Linux_MacOS(self,peca):
+            peca=self.imagem_peca(peca)
+            if peca==None:
+                return
+            else:
+                return peca.replace('\\','/')
+
+
         def imagem_peca(self,peca):
             if peca=='p':
-                return os.getcwd()+'\\imgs\\peao_branco.png'                
+                return os.getcwd()+'\\imgs\\peao_branco.png'
             if peca=='P':
                 return os.getcwd()+'\\imgs\\peao_preto.png'                
             if peca=='r':
@@ -297,41 +326,48 @@ class Jogo:
             if peca=='C':
                 return os.getcwd()+'\\imgs\\cavalo_preto.png'
         # desenha(peça selecionada,jogo.ganhou())
-        def desenha(self,selecionado,venceu):
-            if venceu=='P':
-                bg=pygame.image.load(os.getcwd()+'\\imgs\\bg_ganhou_P.png')
-                tela.blit(bg,(0,0))
-                clock.tick(10)
-                pygame.quit()
-                quit()
-            elif venceu=='b':
-                bg=pygame.image.load(os.getcwd()+'\\imgs\\bg_ganhou_b.png')
-                tela.blit(bg,(0,0))
-                clock.tick(10)
-                pygame.quit()
-                quit()
-            elif venceu=='e':
-                bg=pygame.image.load(os.getcwd()+'\\imgs\\bg_empate.png')
-                tela.blit(bg,(0,0))
-                clock.tick(10)
-                pygame.quit()
-                quit()
-            else:
-                matriz=[]
-                #desenhando fundo
-                bg=pygame.image.load(FUNDO)
-                tela.blit(bg,(0,0))
-                #DESENHANDO HIGHLIGHT
-                k=None###############QUEM É SELECIONADO? É selecao_orig CHAMAR NORMALMENTE TESTAR
-                RECT=self.tabuleiro_2_pixels(selecionado[1],selecionado[0])
-                if selecionado :
-                    k=pygame.draw.rect(tela,AMARELO_HIGHLIGHT,[RECT[0][0],RECT[0][1],RECT[1][0],RECT[1][1]])
-                #desenhando pecas
-                for i in range(len(self.get_tabuleiro())):
-                    for j in range(len(self.get_tabuleiro()[i])):
-                        if self.imagem_peca(self.get_tabuleiro()[i][j]) :
-                            peca=pygame.image.load(self.imagem_peca(self.get_tabuleiro()[i][j]))
-                            tela.blit(peca,self.tabuleiro_2_pixels(j,i)[0])
+
+
+
+        def desenha(self,selecionado):
+            #if venceu=='P':
+            #    bg=pygame.image.load(convert_platform(os.getcwd()+'\\imgs\\bg_ganhou_P.png'))
+            #    tela.blit(bg,(0,0))
+            ##    clock.tick(10)
+             #   pygame.quit()
+             #   quit()
+            #elif venceu=='b':
+            #    bg=pygame.image.load(convert_platform(os.getcwd()+'\\imgs\\bg_ganhou_b.png'))
+            #    tela.blit(bg,(0,0))
+            #    clock.tick(10)
+            #    quit()
+            #elif venceu=='e':
+             #   bg=pygame.image.load(convert_platform(os.getcwd()+'\\imgs\\bg_empate.png'))
+             #   tela.blit(bg,(0,0))
+            #    clock.tick(10)
+            #    pygame.quit()
+            #    quit()
+            #else:
+            matriz=[]
+            #desenhando fundo
+            #bg=pygame.image.load(FUNDO_LINUX_MAC_OSX)
+            bg=pygame.image.load(convert_platform(FUNDO))############
+            tela.blit(bg,(0,0))
+            #DESENHANDO HIGHLIGHT
+            k=None###############QUEM É SELECIONADO? É selecao_orig CHAMAR NORMALMENTE TESTAR
+
+
+            if selecionado :
+                RECT = self.tabuleiro_2_pixels(selecionado[1], selecionado[0])
+                pygame.draw.rect(tela,AMARELO_HIGHLIGHT,[RECT[0][0],RECT[0][1],RECT[1][0],RECT[1][1]])
+            #desenhando pecas
+            for i in range(len(self.get_tabuleiro())):
+                for j in range(len(self.get_tabuleiro()[i])):
+#                    if self.imagem_peca_Linux_MacOS(self.get_tabuleiro()[i][j]) :
+                   if self.imagem_peca(self.get_tabuleiro()[i][j]) :##########################
+                        peca=pygame.image.load(convert_platform(self.imagem_peca(self.get_tabuleiro()[i][j])))##################
+#                        peca=pygame.image.load(self.imagem_peca_Linux_MacOS(self.get_tabuleiro()[i][j]))
+                        tela.blit(peca,self.tabuleiro_2_pixels(j,i)[0])
 
 
 
@@ -341,13 +377,34 @@ class Jogo:
 def loop_jogo():
     sair = False
 
+    vencedor=None
     
     org=[]
-    selecionado=
+    #selecionado=
     jogo=Jogo()
     while not sair:
         if(verificaFimDeJogo(jogo.tabuleiro,jogo.turno)):
-                            sair = True
+            print(jogo.get_turno())
+            tela2 = pygame.display.set_mode((640, 640))
+            if(jogo.get_turno()%2==1):
+                #vencedor='p'
+                vencedor=convert_platform(os.getcwd() + '\\imgs\\bg_ganhou_b.png')
+                #bg = pygame.image.load(convert_platform(os.getcwd() + '\\imgs\\bg_ganhou_p.png'))
+                #tela2.blit(bg, (0, 0))
+                #time.sleep(5)
+                #jogo.desenha([],'P')
+            if(jogo.get_turno()%2==0):
+                vencedor =convert_platform(os.getcwd() + '\\imgs\\bg_ganhou_P.png')
+                #vencedor ='b'
+                #bg = pygame.image.load(convert_platform(os.getcwd() + '\\imgs\\bg_ganhou_b.png'))
+                #tela2.blit(bg, (0, 0))
+                #time.sleep(5)
+                #jogo.desenha([],'b')
+            #turno ímpar e acabou o jogo : preto ganhou
+            #turno par e acabou o jogo: branco ganhou
+            print('xeque mate')
+            print(jogo.estado_xeque)
+            sair = True
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 sair = True
@@ -374,11 +431,25 @@ def loop_jogo():
                     org = []
                     print(jogo.tabuleiro)
                     break
-        tela.fill(PRETO)
+        #tela.fill(PRETO)
+        #if vencedor != '':
+
+
+         #   pygame.time.wait(5000)
         jogo.promocao() #LISTENER VERIFICANDO SE ALGUEM É APTO A PROMOÇÃO
-        jogo.desenha(org,jogo.ganhou())# desenha([i,] da peça selecionada,jogo.ganhou())
+        jogo.desenha(org)#
         pygame.display.update()
-        clock.tick(60)
-loop_jogo()
+        clock.tick()
+    return vencedor
+
+img_fim=loop_jogo()
 pygame.quit()
+if img_fim != None:
+    pygame.init()
+    tela2 = pygame.display.set_mode((640, 640))
+    clock = pygame.time.Clock()
+    bg = pygame.image.load(img_fim)
+    tela2.blit(bg,[0,0])
+    pygame.time.wait(5000)
+    pygame.quit()
 quit()
