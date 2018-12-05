@@ -168,11 +168,12 @@ class Jogo:
             # A : rainha
             # R : rei
             # P : peão
+            #######################TABULEIRO PRE XEQUE MATE
             self.tabuleiro=[
-                            ['T','C','B','R','A','B','C','T'],
-                            ['P','P','P','P','P','P','P','P'],
+                            ['0','0','a','0','0','0','0','0'],
+                            ['R','0','0','0','0','0','0','P'],
                             ['0','0','0','0','0','0','0','0'],
-                            ['0','0','0','0','0','0','0','0'],
+                            ['0','a','0','0','0','0','0','0'],
                             ['0','0','0','0','0','0','0','0'],
                             ['0','0','0','0','0','0','0','0'],
                             ['p','p','p','p','p','p','p','p'],
@@ -386,14 +387,14 @@ def loop_jogo():
         if(verificaFimDeJogo(jogo.tabuleiro,jogo.turno)):
             print(jogo.get_turno())
             tela2 = pygame.display.set_mode((640, 640))
-            if(jogo.get_turno()%2==0):
+            if(jogo.get_turno()%2==1):
                 #vencedor='p'
                 vencedor=convert_platform(os.getcwd() + '\\imgs\\bg_ganhou_b.png')
                 #bg = pygame.image.load(convert_platform(os.getcwd() + '\\imgs\\bg_ganhou_p.png'))
                 #tela2.blit(bg, (0, 0))
                 #time.sleep(5)
                 #jogo.desenha([],'P')
-            if(jogo.get_turno()%2==1):
+            if(jogo.get_turno()%2==0):
                 vencedor =convert_platform(os.getcwd() + '\\imgs\\bg_ganhou_P.png')
                 #vencedor ='b'
                 #bg = pygame.image.load(convert_platform(os.getcwd() + '\\imgs\\bg_ganhou_b.png'))
@@ -448,6 +449,15 @@ if img_fim != None:
     pygame.init()
     tela2 = pygame.display.set_mode((640, 640))
     clock = pygame.time.Clock()
+    #basicfont = pygame.font.SysFont(None, 48)
+    #text = basicfont.render(img_fim, True, (255, 0, 0), (255, 255, 255))
+    #textrect = text.get_rect()
+    #textrect.centerx = screen.get_rect().centerx
+    #textrect.centery = screen.get_rect().centery
+
+    #screen.fill((255, 255, 255))
+    #screen.blit(text, textrect)
+
     bg = pygame.image.load(img_fim)
     tela2.blit(bg,[0,0])
     pygame.display.update()
