@@ -157,6 +157,7 @@ def conta_pecas(T):
 def RESULTADO(T,A):
     #aplica a acao num tabuleiro
     _T = deepcopy(T)
+    print('*******',A)
     _T[A[2]][A[3]]=_T[A[0]][A[1]]
     _T[A[0]][A[1]]='0'
     return T
@@ -164,27 +165,27 @@ def RESULTADO(T,A):
 def MIN_MAX_Decisao(T):
     u=[]
     for A in ACOES(T):
-        u.append([MIN_VALUE(RESULTADO(T,A)),A])
+        u.append([MIN_VALUE(RESULTADO(T,A),1),A])
     u.sort(reverse=True,key=aux)
     return u[0][1]
 
 def aux(e):
     return e[1]
 
-def MAX_VALUE(T):
-    if TEST_ENC(T):
+def MAX_VALUE(T,p):
+    if TEST_ENC(T) or p==0:
         return UTILITY(T)
     V=0-INFINITO
     for A in ACOES(T):
-        V=max(V,MIN_VALUE(RESULTADO(T,A)))
+        V=max(V,MIN_VALUE(RESULTADO(T,A),p-1))
     return V
 
-def MIN_VALUE(T):
-    if TEST_ENC(T):
+def MIN_VALUE(T,p):
+    if TEST_ENC(T) or p==0:
         return UTILITY(T)
     V=INFINITO
     for A in ACOES(T):
-        V=min(V,MAX_VALUE(RESULTADO(T,A)))
+        V=min(V,MAX_VALUE(RESULTADO(T,A),p-1))
     return V
 
 def TEST_ENC(T):
@@ -250,7 +251,12 @@ def ACOES(T):
     acoes=[]
     for P in pretas:
         M=movimentos_possiveis_peca(T,P[0],P[1])
-        acoes.append([P[0],P[1],M[0],M[1]])
+        #print('p', P, 'a', M)
+        if M:
+            print(M)
+            for mov in M:
+                acoes.append([P[0],P[1],mov[0],mov[1]])
+        #print('******',[P[0],P[1],M[0],M[1]])
     return acoes
 
 # -------------------------------------------------------funções da IA--------------------------------------
@@ -692,8 +698,8 @@ def loop_jogo():
             sair = True
         if jogo.turno % 2 == 0:
             pretas = pega_pecas_pretas(jogo.get_tabuleiro())
-            #jogada = MIN_MAX_Decisao(jogo.get_tabuleiro())
-            jogada=pega_jogada_aleatoria(pretas, jogo.get_tabuleiro())
+            jogada = MIN_MAX_Decisao(jogo.get_tabuleiro())
+            #jogada=pega_jogada_aleatoria(pretas, jogo.get_tabuleiro())
             pygame.event.post(pygame.event.Event(pygame.MOUSEBUTTONDOWN))
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
