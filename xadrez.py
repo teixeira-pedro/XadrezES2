@@ -519,9 +519,10 @@ class Jogo:
         if selecionado:
             highlight = pygame.image.load(convert_platform(os.getcwd() + '\\imgs\\highlight.png'))
             tela.blit(highlight, self.tabuleiro_2_pixels(selecionado[0], selecionado[1])[0])
-            # RECT = self.tabuleiro_2_pixels(selecionado[1], selecionado[0])
-            # pygame.draw.rect(tela,AMARELO_HIGHLIGHT,[RECT[0][0],RECT[0][1],RECT[1][0],RECT[1][1]])
-        # desenhando pecas
+            possiveis =  movimentos_possiveis_peca(self.tabuleiro,selecionado[1],selecionado[0])
+            for mov in possiveis:
+                highlight = pygame.image.load(convert_platform(os.getcwd() + '\\imgs\\highlight_verde.png'))
+                tela.blit(highlight, self.tabuleiro_2_pixels(mov[1], mov[0])[0])
         for i in range(len(self.get_tabuleiro())):
             for j in range(len(self.get_tabuleiro()[i])):
                 #                    if self.imagem_peca_Linux_MacOS(self.get_tabuleiro()[i][j]) :
