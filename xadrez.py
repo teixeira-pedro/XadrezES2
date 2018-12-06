@@ -159,16 +159,13 @@ def MIN_VALUE(estado):
 
 
 # aleatoriamente o pc selecionará uma peça e retornara a as ações disponiveis para a peca
-def ACOES(jogo, tabuleiro):
-    kk = True
-    while kk:
-        kk = tabuleiro[casa_selecionada_aleatoria[0]][casa_selecionada_aleatoria[1]] != '0' and \
-             tabuleiro[casa_selecionada_aleatoria[0]][casa_selecionada_aleatoria[1]].isupper()
-        # se a peça pega aleatoriamente é uma casa não vazia e não for uma peça preta
-        casa_selecionada_aleatoria = [randint(0, 7), randint(0, 7)]  # procure por uma peça nova
-    # são jogadas disponiveis (possiveis) a partir de uma peca, selecionada aleatoriamente
-    return jogo.movimentos_possiveis_peca(tabuleiro, casa_selecionada_aleatoria[0], casa_selecionada_aleatoria[1])
-
+def ACOES(T):
+    pretas=pega_pecas_pretas(T)
+    acoes=[]
+    for P in pretas:
+        M=movimentos_possiveis_peca(T,P[0],P[1])
+        acoes.append(P[0],P[1],M[0],M[1])
+    return acoes
 
 # -------------------------------------------------------funções da IA--------------------------------------
 
