@@ -692,7 +692,8 @@ def loop_jogo():
             sair = True
         if jogo.turno % 2 == 0:
             pretas = pega_pecas_pretas(jogo.get_tabuleiro())
-            jogada = pega_jogada_aleatoria(pretas, jogo.get_tabuleiro())
+            #jogada = MIN_MAX_Decisao(jogo.get_tabuleiro())
+            jogada=pega_jogada_aleatoria(pretas, jogo.get_tabuleiro())
             pygame.event.post(pygame.event.Event(pygame.MOUSEBUTTONDOWN))
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
