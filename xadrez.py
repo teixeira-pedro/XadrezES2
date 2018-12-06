@@ -106,13 +106,15 @@ def UTILITY(T):
                     (16 * ('a' == T[i][j])) + (20 * ('r' == T[i][j]))
             )
                       )
-            pesoB += (DPRA([i, j], localiza_rei_adversario(T, 'R')) * (
+            pesoP += (DPRA([i, j], localiza_rei_adversario(T, 'R')) * (
                     (1 * 'P' == T[i][j]) + (4 * ('P' == T[i][j] and i in [4, 5, 6])) + (5 * 'C' == T[i][j]) + (
                         10 * ((T[i][j] == 'T') or (T[i][j] == 'B'))) +
                     (16 * ('A' == T[i][j])) + (20 * ('R' == T[i][j]))
             )
                       )
     return pesoP - pesoB
+
+
 
 
 # funcao auxiliar DPRA "Distancia Para Rei Adversario" calcula a distancia pro rei adversario
