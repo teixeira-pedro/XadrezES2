@@ -8,6 +8,7 @@ from math import sqrt
 from random import randint
 import sys
 from tkinter import *
+from copy import *
 
 pygame.init()
 
@@ -133,17 +134,100 @@ def localiza_rei_adversario(T, rei_jogador_atual):
             if rei_jogador_atual == 'R' and T[i][j] == 'r':
                 return [i, j]
 
+def localiza_rei_preto(T):
+    for i in range(len(T)):
+        for j in range(len(T[i])):
+            if T[i][j]=='R':
+                return [i,j]
+
+def localiza_rei_branco(T):
+    for i in range(len(T)):
+        for j in range(len(T[i])):
+            if T[i][j] == 'r':
+                return [i, j]
+
+def conta_pecas(T):
+    cont=0
+    for l in T:
+        for P in l:
+            if P != '0':
+                cont=cont+1
+    return cont
+
+def RESULTADO(T,A):
+    #aplica a acao num tabuleiro
+    _T = deepcopy(T)
+    _T[A[2]][A[3]]=_T[A[0]][A[1]]
+    _T[A[0]][A[1]]='0'
+    return T
+
+def MIN_MAX_Decisao(T):
+    u=[]
+    for A in ACOES(T):
+        u.append([MIN_VALUE(RESULTADO(T,A)),A])
+    u.sort(reverse=True,key=aux)
+    return u[0][1]
+
+def aux(e):
+    return e[1]
+
+def MAX_VALUE(T):
+    if TEST_ENC(T):
+        return UTILITY(T)
+    V=0-INFINITO
+    for A in ACOES(T):
+        V=max(V,MIN_VALUE(RESULTADO(T,A)))
+    return V
+
+def MIN_VALUE(T):
+    if TEST_ENC(T):
+        return UTILITY(T)
+    V=INFINITO
+    for A in ACOES(T):
+        V=min(V,MAX_VALUE(RESULTADO(T,A)))
+    return V
+
+def TEST_ENC(T):
+    #empate so ha 2 peças (2 reis)
+    if (conta_pecas(T))==2 :
+        return 0
+    if xeque_mate_branco(T):
+        return INFINITO
+    if xeque_mate_preto(T):
+        return (0-INFINITO)
+
+def xeque_mate_branco(tabuleiro):
+    for x in range(len(tabuleiro)):
+        for y in range(len(tabuleiro[0])):
+                if not tabuleiro[x][y].isupper():
+                    movimentos = movimentos_possiveis_peca(tabuleiro, x, y);
+                    for movimento in movimentos:
+                        if (not verificaCheckReiPecaBranca(tabuleiro, x, y, movimento[0], movimento[1])):
+                            return 0
+    return 1
+
+def xeque_mate_preto(tabuleiro):
+    for x in range(len(tabuleiro)):
+        for y in range(len(tabuleiro[0])):
+                if not tabuleiro[x][y].isupper():
+                    movimentos = movimentos_possiveis_peca(tabuleiro, x, y);
+                    for movimento in movimentos:
+                        if (not verificaCheckReiPecaBranca(tabuleiro, x, y, movimento[0], movimento[1])):
+                            return 0
+
+    return 1
+
 
 # MIN-MAX-Decisão(tabuleiro)
 
 # seria "a" uma ação ? isto é, uma jogada
 
 # tomara a decisao apos calcular as possibilidades de perda ou ganho de uma jogada aleatoria
-def MIN_MAX_Decisao(tabuleiro):  # como decidir?
-    return i_999(MIN_VALOR(RESULTADO(tabuleiro, a)))
+def MIN_MAX_Decisao_DEPRECIADO(tabuleiro):  # como decidir?
+    return i_999(MIN_VALUE(RESULTADO(tabuleiro, a)))
 
 
-def MAX_VALUE(tabuleiro):
+def MAX_VALUE_DEPRECIADO(tabuleiro):
     if TEST_ENC(tabuleiro):
         return UTILITY(tabuleiro)
     V = 0 - INFINITO
@@ -152,7 +236,7 @@ def MAX_VALUE(tabuleiro):
     return V
 
 
-def MIN_VALUE(estado):
+def MIN_VALUE_DEPRECIADO(estado):
     if TEST_ENC(estado):
         return UTILITY(estado)
     v = INFINITO
@@ -166,7 +250,7 @@ def ACOES(T):
     acoes=[]
     for P in pretas:
         M=movimentos_possiveis_peca(T,P[0],P[1])
-        acoes.append(P[0],P[1],M[0],M[1])
+        acoes.append([P[0],P[1],M[0],M[1]])
     return acoes
 
 # -------------------------------------------------------funções da IA--------------------------------------
